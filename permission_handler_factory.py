@@ -1,4 +1,4 @@
-from permissionHandler import (
+from permission_handler import (
     CustomPermissionHandler,
     TemplatePermissionHandler,
     CustomTemplatePermissionHandler,
@@ -15,9 +15,9 @@ class PermissionHandlerFactory:
     }
 
     @staticmethod
-    def getHandler(permissionType):
-        permissionTypeTuple = tuple(permissionType)
-        handlerClass = PermissionHandlerFactory.HANDLERS.get(permissionTypeTuple)
-        if handlerClass:
-            return handlerClass()
-        raise ValueError(f"Unknown permission type: {permissionTypeTuple}")
+    def get_handler(permission_type):
+        permission_type_tuple = tuple(permission_type)
+        handler_class = PermissionHandlerFactory.HANDLERS.get(permission_type_tuple)
+        if handler_class:
+            return handler_class()
+        raise ValueError(f"Unknown permission type: {permission_type_tuple}")

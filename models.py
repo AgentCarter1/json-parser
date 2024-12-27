@@ -11,28 +11,28 @@ class PermissionType(Enum):
 class User:
     def __init__(
         self,
-        userId: str,
-        userKeys: List[Dict[str, str]],
-        userType: str,
-        userLevel: str,
-        permissionType: tuple,
+        user_id: str,
+        user_keys: List[Dict[str, str]],
+        user_type: str,
+        user_level: str,
+        permission_type: tuple,
         permissions: Dict[str, Optional[Dict[str, List[Dict[str, str]]]]],
     ):
-        self.userId = userId
-        self.userKeys = userKeys
-        self.userType = userType
-        self.userLevel = userLevel
-        self.permissionType = permissionType
+        self.user_id = user_id
+        self.user_keys = user_keys
+        self.user_type = user_type
+        self.user_level = user_level
+        self.permission_type = permission_type
         self.permissions = permissions
 
     @staticmethod
-    def fromDict(userId: str, data: Dict) -> "User":
-        permissionType = tuple(PermissionType(pt) for pt in data["permission_type"])
+    def from_dict(user_id: str, data: Dict) -> "User":
+        permission_type = tuple(PermissionType(pt) for pt in data["permission_type"])
         return User(
-            userId=userId,
-            userKeys=data["user_keys"],
-            userType=data["user_type"],
-            userLevel=data["user_level"],
-            permissionType=permissionType,
+            user_id=user_id,
+            user_keys=data["user_keys"],
+            user_type=data["user_type"],
+            user_level=data["user_level"],
+            permission_type=permission_type,
             permissions=data["permissions"],
         )
