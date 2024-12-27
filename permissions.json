@@ -1,0 +1,94 @@
+{
+  "users": {
+    "1234567": {
+      "user_keys": [
+        { "key_type": "RFID", "key_value": "12312" },
+        { "key_type": "QR", "key_value": "56432" }
+      ],
+      "user_type": "PERMANENT",
+      "user_level": "ADMIN",
+      "permission_type": ["CUSTOM"],
+      "permissions": {
+        "custom": {
+          "SATURDAY": [
+            {
+              "start_time": "2024-12-30T10:00:00Z",
+              "end_time": "2024-12-30T14:00:00Z"
+            }
+          ]
+        },
+        "template": null
+      }
+    },
+    "7654321": {
+      "user_keys": [
+        { "key_type": "RFID", "key_value": "5634" },
+        { "key_type": "QR", "key_value": "89756" },
+        { "key_type": "start_date", "key_value": "2024-12-25T12:00:00Z" },
+        { "key_type": "end_date", "key_value": "2024-12-25T12:00:00Z" }
+      ],
+      "user_type": "TEMPORARY",
+      "user_level": "USER",
+      "permission_type": ["CUSTOM", "TEMPLATE"],
+      "permissions": {
+        "custom": {
+          "FRIDAY": [
+            {
+              "start_time": "2024-12-29T11:00:00Z",
+              "end_time": "2024-12-31T13:00:00Z"
+            }
+          ]
+        },
+        "template": ["2345", "52345"]
+      }
+    }
+  },
+  "templates": {
+    "52345": {
+      "template_name": "ALL_WEEK",
+      "schedules": {
+        "MONDAY": [
+          {
+            "start_time": "2024-12-25T12:00:00Z",
+            "end_time": "2024-12-25T18:00:00Z"
+          }
+        ],
+        "TUESDAY": [
+          {
+            "start_time": "2024-12-26T09:00:00Z",
+            "end_time": "2024-12-26T12:00:00Z"
+          }
+        ],
+        "WEDNESDAY": [
+          {
+            "start_time": "2024-12-27T10:00:00Z",
+            "end_time": "2024-12-27T14:00:00Z"
+          }
+        ],
+        "FRIDAY": [
+          {
+            "start_time": "2024-12-29T08:00:00Z",
+            "end_time": "2024-12-29T11:00:00Z"
+          }
+        ]
+      }
+    },
+    "2345": {
+      "template_name": "WEEKEND_TEMPLATE",
+      "schedules": {
+        "SATURDAY": [
+          {
+            "start_time": "2024-12-30T10:00:00Z",
+            "end_time": "2024-12-30T14:00:00Z"
+          }
+        ],
+        "SUNDAY": [
+          {
+            "start_time": "2024-12-31T11:00:00Z",
+            "end_time": "2024-12-31T13:00:00Z"
+          }
+        ]
+      }
+    }
+  }
+}
