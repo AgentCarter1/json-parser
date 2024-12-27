@@ -2,17 +2,22 @@ from permission_handler import (
     CustomPermissionHandler,
     TemplatePermissionHandler,
     CustomTemplatePermissionHandler,
-    PermissionType,
 )
+from models import PermissionType
 
-# Factory for Permission Handlers
+
 class PermissionHandlerFactory:
+    HANDLERS = {
+        (PermissionType.CUSTOM,): CustomPermissionHandler,
+        (PermissionType.TEMPLATE,): TemplatePermissionHandler,
+        (PermissionType.CUSTOM, PermissionType.TEMPLATE): CustomTemplatePermissionHandler,
+        (PermissionType.TEMPLATE, PermissionType.CUSTOM): CustomTemplatePermissionHandler,
+    }
+
     @staticmethod
     def get_handler(permission_type):
-        if permission_type == [PermissionType.CUSTOM.value]:
-            return CustomPermissionHandler()
-        elif permission_type == [PermissionType.TEMPLATE.value]:
-            return TemplatePermissionHandler()
-        elif set(permission_type) == {PermissionType.CUSTOM.value, PermissionType.TEMPLATE.value}:
-            return CustomTemplatePermissionHandler()
-        raise ValueError(f"Unknown permission type: {permission_type}")
+        permission_type_tuple = tuple(permission_type)
+        handler_class = PermissionHandlerFactory.HANDLERS.get(permission_type_tuple)
+        if handler_class:
+            return handler_class()
+        raise ValueError(f"Unknown permission type: {permission_type_tuple}")

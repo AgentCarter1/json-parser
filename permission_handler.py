@@ -1,71 +1,63 @@
 from abc import ABC, abstractmethod
-from enum import Enum
+from datetime import datetime
+from models import User
 
-# Enum for Permission Types
-class PermissionType(Enum):
-    CUSTOM = "CUSTOM"
-    TEMPLATE = "TEMPLATE"
-    CUSTOM_TEMPLATE = "CUSTOM_TEMPLATE"
 
-# Abstract Base Class for Permission Handlers
 class PermissionHandler(ABC):
     @abstractmethod
-    def get_permissions(self, user, data, day, current_time):
+    def get_permissions(self, user: User, data: dict, day: str, current_time: datetime):
         pass
 
-# Custom Permission Handler
-class CustomPermissionHandler(PermissionHandler):
-    def get_permissions(self, user, data, day, current_time):
-        return self._filter_permissions(user['permissions'].get('custom', {}).get(day, []), current_time)
-
-    def _filter_permissions(self, permissions, current_time):
+    @staticmethod
+    def _filter_permissions(permissions, current_time):
         return [
             permission
             for permission in permissions
-            if self._is_time_in_range(
-                permission['start_time'].split("T")[1].replace("Z", ""),
-                permission['end_time'].split("T")[1].replace("Z", ""),
-                current_time
+            if PermissionHandler._is_time_in_range(
+                permission["start_time"],
+                permission["end_time"],
+                current_time,
             )
         ]
 
     @staticmethod
     def _is_time_in_range(start_time, end_time, current_time):
-        return start_time <= current_time <= end_time
+        start = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%SZ").time()
+        end = datetime.strptime(end_time, "%Y-%m-%dT%H:%M:%SZ").time()
+        return start <= current_time.time() <= end
 
-# Template Permission Handler
+
+class CustomPermissionHandler(PermissionHandler):
+    def get_permissions(self, user: User, data: dict, day: str, current_time: datetime):
+        permissions = user.permissions.get("custom", {}).get(day, [])
+        return self._filter_permissions(permissions, current_time)
+
+
 class TemplatePermissionHandler(PermissionHandler):
-    def get_permissions(self, user, data, day, current_time):
+    def get_permissions(self, user: User, data: dict, day: str, current_time: datetime):
         permissions = []
-        template_ids = user['permissions'].get('template', [])
+        template_ids = user.permissions.get("template", [])
         for template_id in template_ids:
-            template = data['templates'].get(template_id)
+            template = data["templates"].get(template_id)
             if template:
-                permissions.extend(self._filter_permissions(template['schedules'].get(day, []), current_time))
+                permissions.extend(
+                    self._filter_permissions(
+                        template["schedules"].get(day, []), current_time
+                    )
+                )
         return permissions
 
-    def _filter_permissions(self, permissions, current_time):
-        return [
-            permission
-            for permission in permissions
-            if self._is_time_in_range(
-                permission['start_time'].split("T")[1].replace("Z", ""),
-                permission['end_time'].split("T")[1].replace("Z", ""),
-                current_time
-            )
-        ]
 
-    @staticmethod
-    def _is_time_in_range(start_time, end_time, current_time):
-        return start_time <= current_time <= end_time
-
-# Custom + Template Permission Handler
 class CustomTemplatePermissionHandler(PermissionHandler):
-    def get_permissions(self, user, data, day, current_time):
+    def get_permissions(self, user: User, data: dict, day: str, current_time: datetime):
         custom_handler = CustomPermissionHandler()
         template_handler = TemplatePermissionHandler()
 
-        custom_permissions = custom_handler.get_permissions(user, data, day, current_time)
-        template_permissions = template_handler.get_permissions(user, data, day, current_time)
+        custom_permissions = custom_handler.get_permissions(
+            user, data, day, current_time
+        )
+        template_permissions = template_handler.get_permissions(
+            user, data, day, current_time
+        )
 
         return custom_permissions + template_permissions
