@@ -1,44 +1,37 @@
 import json
 from datetime import datetime, timezone
-from permission_handler_factory import PermissionHandlerFactory
+from permissionHandlerFactory import PermissionHandlerFactory
 from models import User
 
 
-def load_json(file_path):
-    with open(file_path, "r") as f:
+def loadJson(filePath):
+    with open(filePath, "r") as f:
         return json.load(f)
 
 
-def get_user_permissions(user_id, data, day):
-    user_data = data["users"].get(user_id)
-    if not user_data:
-        return f"User with ID {user_id} not found."
-
-    user = User.from_dict(user_id, user_data)
-
-    current_time = datetime.now(timezone.utc)
-    handler = PermissionHandlerFactory.get_handler(user.permission_type)
-
-    return handler.get_permissions(user, data, day, current_time)
+def getUserPermissions(userId, data, day):
+    userData = data["users"].get(userId)
+    if not userData:
+        return f"User with ID {userId} not found."
+    user = User.fromDict(userId, userData)
+    currentTime = datetime.now(timezone.utc)
+    handler = PermissionHandlerFactory.getHandler(user.permissionType)
+    return handler.getPermissions(user, data, day, currentTime)
 
 
 def main():
-    file_path = "permissions.json"
-
-    data = load_json(file_path)
-
-    current_day = datetime.now(timezone.utc).strftime("%A").upper()
-
-    user_id = input("Enter the user ID: ").strip()
-
-    permissions = get_user_permissions(user_id, data, current_day)
-
+    filePath = "permissions.json"
+    data = loadJson(filePath)
+    currentDay = datetime.now(timezone.utc).strftime("%A").upper()
+    userId = input("Enter the user ID: ").strip()
+    permissions = getUserPermissions(userId, data, currentDay)
+    
     if isinstance(permissions, str): 
         print(permissions)
     elif permissions:
-        print(f"User {user_id} has the following active permissions on {current_day}: {permissions}")
+        print(f"User {userId} has the following active permissions on {currentDay}: {permissions}")
     else:
-        print(f"User {user_id} has no active permissions on {current_day}.")
+        print(f"User {userId} has no active permissions on {currentDay}.")
 
 
 if __name__ == "__main__":
